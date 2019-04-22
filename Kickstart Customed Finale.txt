@@ -1,0 +1,83 @@
+lang en_US
+keyboard us
+timezone Asia/KualaLumpur --isUtc
+#setup root password if needed replace <> with root password
+rootpw <rootpassword> --iscrypted
+#platform x86, AMD64, or Intel EM64T
+reboot
+text
+%include /tmp/network.txt
+cdrom
+bootloader --location=mbr --append="rhgb quiet splash crashkernel=auto"
+zerombr
+clearpart --all --initlabel --drives=sda
+volgroup vgroot --pesize=4096 pv.0
+part pv.0 --fstype=lvmpv  --ondisk=sda --size=30000
+part / --size 15000 --grow --fstype=xfs
+part /boot --fstype=ext4 --size=1024 --ondisk=sda
+part swap --size 2048 --fstype swap
+logvol /usr --vgname=vgroot --name=usr --fstype=xfs --size=8092
+logvol /var --vgname=vgroot --name=var --fstype=xfs --size=4096
+logvol /home --vgname=vgroot --name=home --fstype=xfs --size=1024
+logvol /opt --vgname=vgroot --name=opt --fstype=xfs --size=4096
+logvol /tmp --vgname=vgroot --name=tmp --fstype=xfs --size=1024
+auth --passalgo=sha512 --useshadow
+selinux --enabled
+firewall --enabled
+skipx
+firstboot --disable
+#Custom kickstart for network configuration prompt during installation
+%pre
+#!/bin/bash
+exec < /dev/tty3 > /dev/tty3 2>&1
+chvt 3
+HOSTNAME=""
+IPADDR=""
+NETMASK=""
+GATEWAY=""
+DNS1=""
+DNS2=""
+answer="n"
+
+while [ x"$answer" != "xy" ] && [ x"$answer" != "xY" ]; do
+         echo "Welcome to the Network Configuration Settings."
+
+         echo -n "Please enter Hostname: "; read HOSTNAME
+         echo -n "Please enter IP Address: "; read IPADDR
+         echo -n "Please enter Netmask: "; read NETMASK
+         echo -n "Please enter Gateway: "; read GATEWAY
+         echo -n "Please enter Primary Nameserver: "; read DNS1
+         echo -n "Please enter Secondary Nameserver: "; read DNS2
+
+         echo You have entered:
+         echo -e "\tHostname:                       $HOSTNAME"
+         echo -e "\tIP Address:                     $IPADDR"
+         echo -e "\tNetmask:                        $NETMASK"
+         echo -e "\tGateway:                        $GATEWAY"
+         echo -e "\tPrimary Nameserver:             $DNS1"
+         echo -e "\tSecondary Nameserver:           $DNS2"
+         echo -n "Is this correct? [y/n] "; read answer
+done
+
+echo "network --device=<networkdeviceinformation> --bootproto=static --hostname=$HOSTNAME --noipv6 --ip=$IPADDR  --netmask=$NETMASK --gateway=$GATEWAY --nameserver=$DNS1,$DNS2" > /tmp/network.txt
+chvt 1
+exec < /dev/tty1 > /dev/tty1 2> /dev/tty1
+%end
+%post --log=/root/ks_post.out
+echo "Banner /etc/banner" >> /etc/ssh/sshd_config
+cat > /etc/banner <<EOF
+*****************************************************************
+*                                                               *
+* This is a private system; explicit authorization from the     *
+* system owner is required for access or use.                   *
+*                                                               *
+* All rights whatsoever are reserved.                           *
+*                                                               *
+*****************************************************************
+EOF
+yum -y update
+%end
+%packages --nobase
+@core
+device-mapper-persistent-data
+%end
