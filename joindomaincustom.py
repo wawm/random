@@ -35,11 +35,11 @@ def checkpackages():
         exit()
 
 def joindomain():
-    DC1_cmd = "echo <DomainPassword> | realm join -U svc_joinonly HS3-DOM-02.qhs.local"
-    DC2_cmd = "echo <DomainPassword> | realm join -U svc_joinonly HS1-DOM-02.qhs.local"
-    DC3_cmd = "echo <DomainPassword> | realm join -U svc_joinonly HS2-DOM-01.qhs.local"
-    DC4_cmd = "echo <DomainPassword> | realm join -U svc_joinonly HS5-DOM-01.qhs.local"
-    DC5_cmd = "echo <DomainPassword> | realm join -U svc_domainjoin HS0-DOM-02.qhstest.local"
+    DC1_cmd = "echo <DomainPassword> | realm join -U <ADUSER> <DOMAINCONTROLLER>"
+    DC2_cmd = "echo <DomainPassword> | realm join -U <ADUSER> <DOMAINCONTROLLER>"
+    DC3_cmd = "echo <DomainPassword> | realm join -U <ADUSER> <DOMAINCONTROLLER>"
+    DC4_cmd = "echo <DomainPassword> | realm join -U <ADUSER> <DOMAINCONTROLLER>"
+    DC5_cmd = "echo <DomainPassword> | realm join -U <ADUSER> <DOMAINCONTROLLER>"
     chk_srv = os.popen('uname -n | cut -f 1 -d-').read()
     chk_ad = os.popen('realm list | grep -i domain-name').read()
 
