@@ -2,6 +2,8 @@
 # Version 1.0
 # Linux add user to Multiple DC for Redhat 7
 # wanazlan85@gmail.com
+# This script will setup SSSD and Join Active Directory domain to Linux(Redhat 7)
+# Example is to add for servers in 5 different datacenters
 ######################################################################
 
 #!/usr/bin/python
