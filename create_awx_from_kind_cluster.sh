@@ -1,5 +1,5 @@
 #!/bin/bash
-#Prereq : Kind, kubectl, docker
+
 set -e
 CLUSTER_NAME="awx-cluster"
 AWX_NAMESPACE="awx"
