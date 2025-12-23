@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#test
 set -e
 CLUSTER_NAME="awx-cluster"
 AWX_NAMESPACE="awx"
