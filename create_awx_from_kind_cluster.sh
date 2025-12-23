@@ -90,7 +90,7 @@ uninstall_awx() {
     echo ""
     
     if ! kind get clusters | grep -q "^${CLUSTER_NAME}$"; then
-        echo "❌ Kind cluster '${CLUSTER_NAME}' does not exist. Nothing to uninstall."
+        echo "Kind cluster '${CLUSTER_NAME}' does not exist. Nothing to uninstall."
         exit 0
     fi
     
